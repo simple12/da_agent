@@ -8,27 +8,64 @@ Natural-language healthcare analytics: question → LLM SQL → validator → Po
 React UI → FastAPI → SQL Generator (LLM/mock) → SQL Validator → Postgres
 ```
 
-## Quick start (Docker)
+## Development
+
+**Prerequisites:** [Docker Desktop](https://www.docker.com/products/docker-desktop/), Node.js 18+ (for the UI).
+
+### Start the stack (Docker)
+
+From the repo root:
 
 ```bash
-# Start Postgres + API
+# Postgres + API
 docker compose up -d postgres api
 
-# Load synthetic data (10k claims, 10k members, 100 providers)
+# One-time (or after wiping the DB): load synthetic data
 docker compose --profile seed run --rm seed
 
-# Run verification suite
-python3 scripts/verify_benchmarks.py
+# Rebuild API after backend code changes
+docker compose up -d --build api
 ```
 
-API: http://localhost:8000  
-Health: http://localhost:8000/health
+| Service | URL |
+|---------|-----|
+| API | http://localhost:8000 |
+| Health | http://localhost:8000/health |
+| Postgres (from host) | `localhost:5433` — db/user/password: `da_agent` |
 
-Postgres is exposed on **5433** (not 5432) when local Postgres already uses 5432.
+Postgres uses host port **5433** when something else already occupies 5432.
 
-## Local development
+**Useful Docker commands:**
 
-### Backend
+```bash
+docker compose ps
+docker compose logs -f api
+docker compose exec postgres psql -U da_agent -d da_agent
+docker compose down          # stop containers
+docker compose down -v       # stop + delete DB volume (requires re-seed)
+```
+
+### Frontend
+
+In a second terminal:
+
+```bash
+cd frontend
+npm install          # first time only
+npm run dev
+```
+
+Open http://localhost:5173 — Vite proxies `/ask` and `/health` to the API on port 8000.
+
+### Verify
+
+```bash
+python3 scripts/verify_benchmarks.py http://localhost:8000
+```
+
+### Local backend (optional)
+
+Run the API on the host while Postgres stays in Docker:
 
 ```bash
 cd backend
@@ -36,21 +73,10 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
 
-# With Docker Postgres running:
-export DATABASE_URL=postgresql://da_agent:da_agent@localhost:5432/da_agent
+export DATABASE_URL=postgresql://da_agent:da_agent@localhost:5433/da_agent
 python scripts/generate_data.py
-uvicorn app.main:app --reload --port 8000
+PYTHONPATH=. uvicorn app.main:app --reload --port 8000
 ```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open http://localhost:5173 — Vite proxies `/ask` to the API.
 
 ## LLM modes
 
