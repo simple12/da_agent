@@ -19,9 +19,11 @@ services:
     build: ./backend
     ports:
       - "8000:8000"
+    env_file:
+      - path: backend/.env
+        required: false
     environment:
       DATABASE_URL: postgresql://da_agent:da_agent@postgres:5432/da_agent
-      LLM_PROVIDER: mock
       CORS_ORIGINS: http://localhost:5173,http://localhost:3000
     depends_on:
       postgres:

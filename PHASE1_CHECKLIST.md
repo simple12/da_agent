@@ -42,7 +42,7 @@ Status against the [Phase 1 spec](Healthcare%20Data%20Analyst%20Agent%20MVP%20-%
 | Postgres for analytics data | ✅ | DB `da_agent`, host port `5433` |
 | Trino / Iceberg | ➖ | Out of scope for this cut; Postgres substituted |
 | Live LLM (default) | ⚠️ | Default `LLM_PROVIDER=mock`; OpenAI path available (`gpt-4o-mini`) |
-| Column-level SQL validation | ❌ | Tables only; columns not validated yet |
+| Column-level SQL validation | ✅ | Qualified + unqualified columns checked against `APPROVED_TABLES` |
 
 ---
 
@@ -96,7 +96,7 @@ curl -s -X POST http://localhost:8000/ask \
 1. Set `LLM_PROVIDER=openai` and `OPENAI_API_KEY`, rebuild API.
 2. Re-run `scripts/verify_benchmarks.py` and record pass/fail.
 3. Test 10+ paraphrased questions; track SQL accuracy and execution rate.
-4. Add column validation to `sql_validator.py` (spec requirement).
+4. ~~Add column validation to `sql_validator.py` (spec requirement).~~ Done — see `backend/tests/test_sql_validator.py`
 
 ---
 
