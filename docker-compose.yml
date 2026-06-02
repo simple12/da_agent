@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: da_agent
+      POSTGRES_PASSWORD: da_agent
+      POSTGRES_DB: da_agent
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U da_agent -d da_agent"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://da_agent:da_agent@postgres:5432/da_agent
+      LLM_PROVIDER: mock
+      CORS_ORIGINS: http://localhost:5173,http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  seed:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql://da_agent:da_agent@postgres:5432/da_agent
+    command: python scripts/generate_data.py
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - seed
+
+volumes:
+  pgdata:
