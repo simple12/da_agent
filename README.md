@@ -10,6 +10,8 @@ Phase 1 delivered the end-to-end MVP. Phase 2 adds a **structured semantic layer
 React UI → FastAPI → Question Analyzer → Metadata Service → Prompt Builder → LLM/mock → SQL Validator → Trino → Postgres
 ```
 
+**Diagrams:** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) (system overview, sequence flow, metadata ER model, Docker layout).
+
 | Layer | Role |
 |-------|------|
 | **Postgres** | Analytics data (`public`) + semantic metadata (`semantic` schema) |
@@ -169,6 +171,7 @@ frontend/       React UI
 
 ## Phase checklists
 
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — system diagrams (Mermaid)
 - [PHASE1_CHECKLIST.md](PHASE1_CHECKLIST.md) — MVP / Trino integration
 - [PHASE2_CHECKLIST.md](PHASE2_CHECKLIST.md) — Semantic layer + regression (Sprints 2.1–2.8)
 
