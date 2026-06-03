@@ -14,7 +14,7 @@ Status against the [Phase 1 spec](Healthcare%20Data%20Analyst%20Agent%20MVP%20-%
 | Question intake (`POST /ask`) | ✅ | `{ "question": "..." }` |
 | SQL generation with semantic model in prompt | ✅ | `backend/app/schema.py` |
 | SQL validator (SELECT only, no DML/DDL) | ✅ | `backend/app/services/sql_validator.py` |
-| Query execution + tabular results | ✅ | Postgres via `query_executor.py` |
+| Query execution + tabular results | ✅ | Trino via `query_executor.py` (`analytics` Postgres catalog) |
 | Response shape `{ question, sql, results }` | ✅ | No charts, explanations, or traces |
 | Canonical tables & metric definitions | ✅ | 4 tables; PMPM, outstanding, pending |
 | Synthetic seed data (spec minimums) | ✅ | `backend/scripts/generate_data.py` |
@@ -40,7 +40,8 @@ Status against the [Phase 1 spec](Healthcare%20Data%20Analyst%20Agent%20MVP%20-%
 | Item | Status | Notes |
 |------|--------|-------|
 | Postgres for analytics data | ✅ | DB `da_agent`, host port `5433` |
-| Trino / Iceberg | ➖ | Out of scope for this cut; Postgres substituted |
+| Trino query engine | ✅ | `trinodb/trino:465`, host port `8081`, `analytics` catalog → Postgres |
+| Iceberg lakehouse | ➖ | Not yet; Postgres remains storage backend via Trino connector |
 | Live LLM (default) | ⚠️ | Default `LLM_PROVIDER=mock`; OpenAI path available (`gpt-4o-mini`) |
 | Column-level SQL validation | ✅ | Qualified + unqualified columns checked against `APPROVED_TABLES` |
 

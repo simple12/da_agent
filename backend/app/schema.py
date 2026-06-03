@@ -96,8 +96,9 @@ Important column notes:
 
 Rules:
 
-Generate PostgreSQL-compatible SQL only (not T-SQL, not MySQL).
-Do not use DATEDIFF, GETDATE(), DATEADD, or other non-Postgres functions.
+Generate Trino SQL (ANSI SQL compatible with the Trino query engine).
+Use unqualified table names (e.g. fact_claim, not catalog.schema.fact_claim).
+Do not use T-SQL, MySQL, or PostgreSQL-only functions (DATEDIFF, GETDATE(), DATEADD, etc.).
 Return SQL only with no markdown fences or explanation.
 Never generate DDL.
 Never generate DML.

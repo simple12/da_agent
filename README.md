@@ -1,12 +1,14 @@
 # Healthcare Data Analyst Agent — Phase 1 MVP
 
-Natural-language healthcare analytics: question → LLM SQL → validator → Postgres → tabular results.
+Natural-language healthcare analytics: question → LLM SQL → validator → Trino → tabular results.
 
 ## Architecture
 
 ```
-React UI → FastAPI → SQL Generator (LLM/mock) → SQL Validator → Postgres
+React UI → FastAPI → SQL Generator (LLM/mock) → SQL Validator → Trino → Postgres (analytics catalog)
 ```
+
+Postgres stores the synthetic dataset. Trino queries it through the `analytics` PostgreSQL catalog connector.
 
 ## Development
 
@@ -17,8 +19,8 @@ React UI → FastAPI → SQL Generator (LLM/mock) → SQL Validator → Postgres
 From the repo root:
 
 ```bash
-# Postgres + API
-docker compose up -d postgres api
+# Postgres + Trino + API
+docker compose up -d postgres trino api
 
 # One-time (or after wiping the DB): load synthetic data
 docker compose --profile seed run --rm seed
@@ -31,6 +33,7 @@ docker compose up -d --build api
 |---------|-----|
 | API | http://localhost:8000 |
 | Health | http://localhost:8000/health |
+| Trino (from host) | http://localhost:8081 |
 | Postgres (from host) | `localhost:5433` — db/user/password: `da_agent` |
 
 Postgres uses host port **5433** when something else already occupies 5432.
@@ -40,7 +43,9 @@ Postgres uses host port **5433** when something else already occupies 5432.
 ```bash
 docker compose ps
 docker compose logs -f api
+docker compose logs -f trino
 docker compose exec postgres psql -U da_agent -d da_agent
+docker compose exec trino trino --execute "SHOW TABLES FROM analytics.public"
 docker compose down          # stop containers
 docker compose down -v       # stop + delete DB volume (requires re-seed)
 ```
@@ -65,7 +70,7 @@ python3 scripts/verify_benchmarks.py http://localhost:8000
 
 ### Local backend (optional)
 
-Run the API on the host while Postgres stays in Docker:
+Run the API on the host while Postgres and Trino stay in Docker:
 
 ```bash
 cd backend
@@ -74,9 +79,14 @@ pip install -r requirements.txt
 cp .env.example .env
 
 export DATABASE_URL=postgresql://da_agent:da_agent@localhost:5433/da_agent
+export QUERY_ENGINE=trino
+export TRINO_HOST=localhost
+export TRINO_PORT=8081
 python scripts/generate_data.py
 PYTHONPATH=. uvicorn app.main:app --reload --port 8000
 ```
+
+Set `QUERY_ENGINE=postgres` to bypass Trino and query Postgres directly (useful if Trino is not running).
 
 ## LLM modes
 

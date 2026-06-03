@@ -15,6 +15,22 @@ services:
       timeout: 5s
       retries: 10
 
+  trino:
+    image: trinodb/trino:465
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./trino/catalog:/etc/trino/catalog
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/v1/info || exit 1"]
+      interval: 5s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
+
   api:
     build: ./backend
     ports:
@@ -24,9 +40,17 @@ services:
         required: false
     environment:
       DATABASE_URL: postgresql://da_agent:da_agent@postgres:5432/da_agent
+      QUERY_ENGINE: trino
+      TRINO_HOST: trino
+      TRINO_PORT: 8080
+      TRINO_CATALOG: analytics
+      TRINO_SCHEMA: public
+      TRINO_USER: da_agent
       CORS_ORIGINS: http://localhost:5173,http://localhost:3000
     depends_on:
       postgres:
+        condition: service_healthy
+      trino:
         condition: service_healthy
 
   seed:

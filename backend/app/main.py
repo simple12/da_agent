@@ -30,7 +30,11 @@ class AskResponse(BaseModel):
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    return {
+        "status": "ok",
+        "query_engine": settings.query_engine,
+        "trino_catalog": settings.trino_catalog if settings.query_engine == "trino" else None,
+    }
 
 
 @app.post("/ask", response_model=AskResponse)
