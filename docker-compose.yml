@@ -57,7 +57,7 @@ services:
     build: ./backend
     environment:
       DATABASE_URL: postgresql://da_agent:da_agent@postgres:5432/da_agent
-    command: python scripts/generate_data.py
+    command: sh -c "python scripts/generate_data.py && python scripts/seed_semantic.py"
     depends_on:
       postgres:
         condition: service_healthy

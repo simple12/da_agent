@@ -1,4 +1,10 @@
-"""Canonical semantic model for SQL validation and prompts."""
+"""SQL validation constants and dialect rules.
+
+Table/column allowlists for validation remain here until Sprint 2.5
+loads them from the semantic metadata repository.
+"""
+
+from __future__ import annotations
 
 APPROVED_TABLES: dict[str, set[str]] = {
     "fact_claim": {
@@ -29,73 +35,7 @@ APPROVED_TABLES: dict[str, set[str]] = {
     },
 }
 
-RELATIONSHIPS = """
-fact_claim.member_id = dim_member.member_id
-fact_claim.provider_id = dim_provider.provider_id
-fact_member_month.member_id = dim_member.member_id
-"""
-
-BUSINESS_METRICS = """
-PMPM = SUM(paid_amount) / SUM(member_months)
-
-Outstanding Claims = SUM(outstanding_amount) WHERE claim_status <> 'PAID'
-
-Pending Claims = claim_status = 'PENDING'
-"""
-
-
-def _format_table_columns() -> str:
-    lines = []
-    for table, columns in APPROVED_TABLES.items():
-        cols = ", ".join(sorted(columns))
-        lines.append(f"{table} ({cols})")
-    return "\n".join(lines)
-
-
-TABLE_COLUMNS = _format_table_columns()
-
-EXAMPLE_QUERIES = """
-Example — PMPM by county:
-SELECT dm.county, SUM(fc.paid_amount) / NULLIF(SUM(fmm.member_months), 0) AS pmpm
-FROM fact_claim fc
-JOIN dim_member dm ON fc.member_id = dm.member_id
-JOIN fact_member_month fmm ON dm.member_id = fmm.member_id
-GROUP BY dm.county
-
-Example — PMPM by age group (use dim_member.age_group; do not compute age from birth date):
-SELECT dm.age_group, SUM(fc.paid_amount) / NULLIF(SUM(fmm.member_months), 0) AS pmpm
-FROM fact_claim fc
-JOIN dim_member dm ON fc.member_id = dm.member_id
-JOIN fact_member_month fmm ON dm.member_id = fmm.member_id
-GROUP BY dm.age_group
-"""
-
-SYSTEM_PROMPT = f"""You are a healthcare SQL analyst.
-
-Available tables and columns (use ONLY these columns):
-
-{TABLE_COLUMNS}
-
-Relationships:
-
-{RELATIONSHIPS}
-
-Business Metrics:
-
-{BUSINESS_METRICS}
-
-Important column notes:
-- dim_member.age_group is pre-populated (values like '0-17', '18-34', '35-49', '50-64', '65+'). Use it directly for age breakdowns.
-- dim_member has NO date_of_birth or birth date column. Never reference date_of_birth.
-- dim_member.county holds county names (e.g. 'Alameda').
-- dim_member.lob is line of business.
-- fact_member_month.month_key is a month string like '2024-01'.
-- Use dim_provider.provider_name for provider labels in results.
-
-{EXAMPLE_QUERIES}
-
-Rules:
-
+SQL_DIALECT_RULES = """
 Generate Trino SQL (ANSI SQL compatible with the Trino query engine).
 Use unqualified table names (e.g. fact_claim, not catalog.schema.fact_claim).
 Do not use T-SQL, MySQL, or PostgreSQL-only functions (DATEDIFF, GETDATE(), DATEADD, etc.).
@@ -125,3 +65,12 @@ FORBIDDEN_KEYWORDS = frozenset(
         "REPLACE",
     }
 )
+
+# Metric → base tables required beyond dimension tables (prompt builder).
+METRIC_BASE_TABLES: dict[str, set[str]] = {
+    "PMPM": {"fact_claim", "fact_member_month", "dim_member"},
+    "OUTSTANDING_CLAIMS": {"fact_claim", "dim_provider"},
+    "PENDING_CLAIMS": {"fact_claim"},
+    "CLAIMS_BY_STATUS": {"fact_claim"},
+    "MEMBER_COUNT": {"dim_member"},
+}

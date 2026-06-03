@@ -22,7 +22,7 @@ From the repo root:
 # Postgres + Trino + API
 docker compose up -d postgres trino api
 
-# One-time (or after wiping the DB): load synthetic data
+# One-time (or after wiping the DB): load synthetic analytics + semantic metadata
 docker compose --profile seed run --rm seed
 
 # Rebuild API after backend code changes
