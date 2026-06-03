@@ -24,7 +24,17 @@ _METRIC_RULES: list[tuple[re.Pattern[str], str]] = [
         "PENDING_CLAIMS",
     ),
     (
-        re.compile(r"\bclaims?\s+by\s+status\b|\bclaim\s+status\b", re.I),
+        re.compile(
+            r"\bclaims?\s+by\s+status\b|\bclaim\s+status\b|\bclaim\s+count\s+by\s+status\b",
+            re.I,
+        ),
+        "CLAIMS_BY_STATUS",
+    ),
+    (
+        re.compile(
+            r"\bclaims?\s+by\s+provider\b|\bclaims?\s+per\s+provider\b|\bclaim\s+(count|volume)\b.*\bprovider\b|\bprovider.*\bclaim\s+(count|volume)\b|\btotal\s+claims?\s+by\s+provider\b",
+            re.I,
+        ),
         "CLAIMS_BY_STATUS",
     ),
     (

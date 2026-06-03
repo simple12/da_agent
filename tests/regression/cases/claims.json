@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Outstanding by provider",
+    "question": "Outstanding claims by provider.",
+    "expected_metric": "OUTSTANDING_CLAIMS",
+    "expected_dimensions": ["provider_name"],
+    "expected_sql_patterns": ["outstanding_amount", "provider_name", "group by"],
+    "tags": ["claims"]
+  },
+  {
+    "name": "Pending claims count",
+    "question": "Pending claims count.",
+    "expected_metric": "PENDING_CLAIMS",
+    "expected_sql_patterns": ["pending", "count"],
+    "tags": ["claims"]
+  },
+  {
+    "name": "Pending payment",
+    "question": "How many claims are pending payment?",
+    "expected_metric": "PENDING_CLAIMS",
+    "expected_sql_patterns": ["pending", "count"],
+    "tags": ["claims"]
+  },
+  {
+    "name": "Pending by county",
+    "question": "Show pending claims by county.",
+    "expected_metric": "PENDING_CLAIMS",
+    "expected_dimensions": ["county"],
+    "expected_sql_patterns": ["pending", "county", "group by"],
+    "tags": ["claims"]
+  },
+  {
+    "name": "Claims by status",
+    "question": "Show claims by status.",
+    "expected_metric": "CLAIMS_BY_STATUS",
+    "expected_dimensions": ["claim_status"],
+    "expected_sql_patterns": ["claim_status", "count"],
+    "tags": ["claims"]
+  },
+  {
+    "name": "Claim count by status",
+    "question": "Claim count by status.",
+    "expected_metric": "CLAIMS_BY_STATUS",
+    "expected_dimensions": ["claim_status"],
+    "expected_sql_patterns": ["claim_status", "group by"],
+    "tags": ["claims"]
+  },
+  {
+    "name": "Outstanding provider group",
+    "question": "What are outstanding claims by provider group?",
+    "expected_metric": "OUTSTANDING_CLAIMS",
+    "expected_dimensions": ["provider_group"],
+    "expected_sql_patterns": ["outstanding_amount", "provider_group"],
+    "tags": ["claims"]
+  },
+  {
+    "name": "Outstanding by provider phrasing",
+    "question": "What are outstanding claims by provider?",
+    "expected_metric": "OUTSTANDING_CLAIMS",
+    "expected_dimensions": ["provider_name"],
+    "expected_sql_patterns": ["outstanding_amount", "provider"],
+    "tags": ["claims"]
+  },
+  {
+    "name": "Pending claims by county breakdown",
+    "question": "Show pending claims by county.",
+    "expected_metric": "PENDING_CLAIMS",
+    "expected_dimensions": ["county"],
+    "expected_sql_patterns": ["county", "pending"],
+    "tags": ["claims"]
+  },
+  {
+    "name": "Total outstanding claims",
+    "question": "Show total outstanding claims by provider.",
+    "expected_metric": "OUTSTANDING_CLAIMS",
+    "expected_dimensions": ["provider_name"],
+    "expected_sql_patterns": ["outstanding_amount", "provider"],
+    "tags": ["claims"]
+  },
+  {
+    "name": "Claims pending phrasing",
+    "question": "How many claims pending?",
+    "expected_metric": "PENDING_CLAIMS",
+    "expected_sql_patterns": ["pending", "count"],
+    "tags": ["claims"]
+  },
+  {
+    "name": "Status breakdown",
+    "question": "Break down claims by status.",
+    "expected_metric": "CLAIMS_BY_STATUS",
+    "expected_dimensions": ["claim_status"],
+    "expected_sql_patterns": ["claim_status"],
+    "tags": ["claims"]
+  },
+  {
+    "name": "Outstanding non-paid",
+    "question": "Outstanding claims where not paid.",
+    "expected_metric": "OUTSTANDING_CLAIMS",
+    "expected_sql_patterns": ["outstanding_amount"],
+    "tags": ["claims"]
+  }
+]

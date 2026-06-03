@@ -3,6 +3,17 @@ from __future__ import annotations
 from typing import Any
 
 
+def structured_error(
+    code: str,
+    message: str,
+    options: list[str] | None = None,
+) -> dict[str, Any]:
+    payload: dict[str, Any] = {"error": code, "message": message}
+    if options:
+        payload["options"] = options
+    return payload
+
+
 class QuestionAnalysisError(Exception):
     def __init__(
         self,

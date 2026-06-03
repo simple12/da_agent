@@ -1,39 +1,6 @@
-"""SQL validation constants and dialect rules.
-
-Table/column allowlists for validation remain here until Sprint 2.5
-loads them from the semantic metadata repository.
-"""
+"""SQL dialect rules and shared constants."""
 
 from __future__ import annotations
-
-APPROVED_TABLES: dict[str, set[str]] = {
-    "fact_claim": {
-        "claim_id",
-        "member_id",
-        "provider_id",
-        "service_date",
-        "paid_amount",
-        "allowed_amount",
-        "outstanding_amount",
-        "claim_status",
-    },
-    "fact_member_month": {
-        "member_id",
-        "month_key",
-        "member_months",
-    },
-    "dim_member": {
-        "member_id",
-        "county",
-        "age_group",
-        "lob",
-    },
-    "dim_provider": {
-        "provider_id",
-        "provider_name",
-        "provider_group",
-    },
-}
 
 SQL_DIALECT_RULES = """
 Generate Trino SQL (ANSI SQL compatible with the Trino query engine).
@@ -66,7 +33,6 @@ FORBIDDEN_KEYWORDS = frozenset(
     }
 )
 
-# Metric → base tables required beyond dimension tables (prompt builder).
 METRIC_BASE_TABLES: dict[str, set[str]] = {
     "PMPM": {"fact_claim", "fact_member_month", "dim_member"},
     "OUTSTANDING_CLAIMS": {"fact_claim", "dim_provider"},

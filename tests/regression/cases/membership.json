@@ -1,0 +1,66 @@
+[
+  {
+    "name": "Members by county",
+    "question": "Show members by county.",
+    "expected_metric": "MEMBER_COUNT",
+    "expected_dimensions": ["county"],
+    "expected_sql_patterns": ["county", "count", "member"],
+    "tags": ["membership"]
+  },
+  {
+    "name": "Members by LOB",
+    "question": "Show members by LOB.",
+    "expected_metric": "MEMBER_COUNT",
+    "expected_dimensions": ["lob"],
+    "expected_sql_patterns": ["lob", "count", "member"],
+    "tags": ["membership"]
+  },
+  {
+    "name": "Member count by county",
+    "question": "Member count by county.",
+    "expected_metric": "MEMBER_COUNT",
+    "expected_dimensions": ["county"],
+    "expected_sql_patterns": ["county", "member_id"],
+    "tags": ["membership"]
+  },
+  {
+    "name": "Count members by LOB",
+    "question": "Count of members by line of business.",
+    "expected_metric": "MEMBER_COUNT",
+    "expected_dimensions": ["lob"],
+    "expected_sql_patterns": ["lob", "count"],
+    "tags": ["membership"]
+  },
+  {
+    "name": "How many members by county",
+    "question": "How many members by county?",
+    "expected_metric": "MEMBER_COUNT",
+    "expected_dimensions": ["county"],
+    "expected_sql_patterns": ["county", "count"],
+    "tags": ["membership"]
+  },
+  {
+    "name": "Member LOB breakdown",
+    "question": "Show members by LOB.",
+    "expected_metric": "MEMBER_COUNT",
+    "expected_dimensions": ["lob"],
+    "expected_sql_patterns": ["lob", "group by"],
+    "tags": ["membership"]
+  },
+  {
+    "name": "Enrolled members by county",
+    "question": "Enrolled members by county.",
+    "expected_metric": "MEMBER_COUNT",
+    "expected_dimensions": ["county"],
+    "expected_sql_patterns": ["county", "dim_member"],
+    "tags": ["membership"]
+  },
+  {
+    "name": "Distinct member count",
+    "question": "Distinct member count by county.",
+    "expected_metric": "MEMBER_COUNT",
+    "expected_dimensions": ["county"],
+    "expected_sql_patterns": ["distinct", "member_id", "county"],
+    "tags": ["membership"]
+  }
+]

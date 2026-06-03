@@ -17,10 +17,44 @@ type AskResponse = {
   results: Record<string, unknown>[];
 };
 
+type ApiErrorDetail = {
+  error: string;
+  message: string;
+  options?: string[];
+};
+
+function parseApiError(data: unknown, fallback: string): ApiErrorDetail {
+  if (data && typeof data === "object" && "detail" in data) {
+    const detail = (data as { detail: unknown }).detail;
+    if (detail && typeof detail === "object" && "error" in detail && "message" in detail) {
+      return detail as ApiErrorDetail;
+    }
+    if (typeof detail === "string") {
+      return { error: "ERROR", message: detail };
+    }
+  }
+  return { error: "ERROR", message: fallback };
+}
+
+function formatErrorCode(code: string): string {
+  return code.replace(/_/g, " ").toLowerCase();
+}
+
+function applyDimensionOption(question: string, option: string): string {
+  const label = option.replace(/_/g, " ");
+  if (/\bby\s+group\b/i.test(question)) {
+    return question.replace(/\bby\s+group\b/i, `by ${label}`);
+  }
+  if (/\bby\s+\w+/i.test(question)) {
+    return question.replace(/\bby\s+[\w\s]+/i, `by ${label}`);
+  }
+  return `${question.replace(/[?.!\s]+$/, "")} by ${label}?`;
+}
+
 export default function App() {
   const [question, setQuestion] = useState(EXAMPLES[0]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ApiErrorDetail | null>(null);
   const [response, setResponse] = useState<AskResponse | null>(null);
 
   async function submit(e?: FormEvent) {
@@ -36,14 +70,20 @@ export default function App() {
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.detail ?? res.statusText);
+        setError(parseApiError(data, res.statusText));
+        return;
       }
       setResponse(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Request failed");
+    } catch {
+      setError({ error: "NETWORK_ERROR", message: "Request failed. Is the API running?" });
     } finally {
       setLoading(false);
     }
+  }
+
+  function chooseDimension(option: string) {
+    setQuestion(applyDimensionOption(question, option));
+    setError(null);
   }
 
   const columns =
@@ -53,7 +93,7 @@ export default function App() {
   return (
     <>
       <h1>Healthcare Data Analyst Agent</h1>
-      <p className="subtitle">Phase 1 MVP — natural language to SQL to results</p>
+      <p className="subtitle">Phase 2 — metadata-driven natural language to SQL to results</p>
 
       <form className="card" onSubmit={submit}>
         <label htmlFor="question">Your question</label>
@@ -82,7 +122,31 @@ export default function App() {
         </div>
       </form>
 
-      {error && <div className="error">{error}</div>}
+      {error && (
+        <div className="error-panel" role="alert">
+          <div className="error-header">
+            <span className="error-code">{formatErrorCode(error.error)}</span>
+            <span className="error-message">{error.message}</span>
+          </div>
+          {error.options && error.options.length > 0 && (
+            <div className="error-options">
+              <p className="error-options-label">Choose a dimension:</p>
+              <div className="error-option-buttons">
+                {error.options.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    className="ghost"
+                    onClick={() => chooseDimension(option)}
+                  >
+                    {option.replace(/_/g, " ")}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {response && (
         <>
@@ -93,7 +157,7 @@ export default function App() {
           <div className="card">
             <label>Results ({response.results.length} rows)</label>
             {response.results.length === 0 ? (
-              <p style={{ margin: 0, color: "#64748b" }}>No rows returned.</p>
+              <p className="muted">No rows returned.</p>
             ) : (
               <table>
                 <thead>

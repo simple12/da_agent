@@ -116,6 +116,62 @@ pre {
   font-size: 0.9rem;
 }
 
+.error-panel {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.error-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.error-code {
+  display: inline-block;
+  width: fit-content;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #991b1b;
+  background: #fee2e2;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+}
+
+.error-message {
+  color: #7f1d1d;
+  font-size: 0.92rem;
+}
+
+.error-options {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #fecaca;
+}
+
+.error-options-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.82rem;
+  color: #991b1b;
+  font-weight: 600;
+}
+
+.error-option-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.muted {
+  margin: 0;
+  color: #64748b;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;

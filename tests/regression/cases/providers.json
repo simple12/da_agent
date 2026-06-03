@@ -1,0 +1,79 @@
+[
+  {
+    "name": "Provider claim volume",
+    "question": "Show claim volume by provider.",
+    "expected_metric": "CLAIMS_BY_STATUS",
+    "expected_dimensions": ["provider_name"],
+    "expected_sql_patterns": ["provider_name", "count"],
+    "tags": ["providers"]
+  },
+  {
+    "name": "Claim count by provider",
+    "question": "Show claim count by provider.",
+    "expected_metric": "CLAIMS_BY_STATUS",
+    "expected_dimensions": ["provider_name"],
+    "expected_sql_patterns": ["provider_name", "count"],
+    "tags": ["providers"]
+  },
+  {
+    "name": "Claims per provider",
+    "question": "Claims per provider.",
+    "expected_metric": "CLAIMS_BY_STATUS",
+    "expected_sql_patterns": ["provider", "count"],
+    "tags": ["providers"]
+  },
+  {
+    "name": "Provider outstanding",
+    "question": "Provider outstanding claims.",
+    "expected_metric": "OUTSTANDING_CLAIMS",
+    "expected_sql_patterns": ["outstanding_amount", "provider"],
+    "tags": ["providers"]
+  },
+  {
+    "name": "Outstanding provider group completion",
+    "question": "Show outstanding claims by provider group.",
+    "expected_metric": "OUTSTANDING_CLAIMS",
+    "expected_dimensions": ["provider_group"],
+    "expected_sql_patterns": ["provider_group", "outstanding_amount"],
+    "tags": ["providers"]
+  },
+  {
+    "name": "Top providers claim count",
+    "question": "Show claim count by provider.",
+    "expected_metric": "CLAIMS_BY_STATUS",
+    "expected_dimensions": ["provider_name"],
+    "expected_sql_patterns": ["provider_name", "count"],
+    "tags": ["providers"]
+  },
+  {
+    "name": "Provider name outstanding",
+    "question": "Outstanding claims by provider name.",
+    "expected_metric": "OUTSTANDING_CLAIMS",
+    "expected_dimensions": ["provider_name"],
+    "expected_sql_patterns": ["provider_name", "outstanding"],
+    "tags": ["providers"]
+  },
+  {
+    "name": "Provider group outstanding amount",
+    "question": "What are outstanding claims by provider group?",
+    "expected_metric": "OUTSTANDING_CLAIMS",
+    "expected_dimensions": ["provider_group"],
+    "expected_sql_patterns": ["provider_group", "outstanding"],
+    "tags": ["providers"]
+  },
+  {
+    "name": "Volume by provider",
+    "question": "Claim volume by provider.",
+    "expected_metric": "CLAIMS_BY_STATUS",
+    "expected_sql_patterns": ["provider", "count"],
+    "tags": ["providers"]
+  },
+  {
+    "name": "Provider claims total",
+    "question": "Total claims by provider.",
+    "expected_metric": "CLAIMS_BY_STATUS",
+    "expected_dimensions": ["provider_name"],
+    "expected_sql_patterns": ["provider", "count"],
+    "tags": ["providers"]
+  }
+]

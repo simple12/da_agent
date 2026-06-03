@@ -1,0 +1,125 @@
+[
+  {
+    "name": "PMPM Alameda",
+    "question": "What is PMPM for Alameda County?",
+    "expected_metric": "PMPM",
+    "expected_filters": {"county": "Alameda"},
+    "expected_sql_patterns": ["alameda", "paid_amount", "member_months"],
+    "tags": ["pmpm"]
+  },
+  {
+    "name": "PMPM by county",
+    "question": "Show PMPM by county.",
+    "expected_metric": "PMPM",
+    "expected_dimensions": ["county"],
+    "expected_sql_patterns": ["group by", "county", "paid_amount"],
+    "tags": ["pmpm"]
+  },
+  {
+    "name": "PMPM by age group",
+    "question": "Show PMPM by age group.",
+    "expected_metric": "PMPM",
+    "expected_dimensions": ["age_group"],
+    "expected_sql_patterns": ["age_group", "paid_amount", "member_months"],
+    "tags": ["pmpm"]
+  },
+  {
+    "name": "PMPM by LOB",
+    "question": "Show PMPM by LOB.",
+    "expected_metric": "PMPM",
+    "expected_dimensions": ["lob"],
+    "expected_sql_patterns": ["lob", "paid_amount"],
+    "tags": ["pmpm"]
+  },
+  {
+    "name": "PMPM by provider group",
+    "question": "Show PMPM by provider group.",
+    "expected_metric": "PMPM",
+    "expected_dimensions": ["provider_group"],
+    "expected_sql_patterns": ["provider_group", "paid_amount"],
+    "tags": ["pmpm"]
+  },
+  {
+    "name": "PMPM by month",
+    "question": "Show PMPM by month.",
+    "expected_metric": "PMPM",
+    "expected_dimensions": ["month"],
+    "expected_sql_patterns": ["month_key", "paid_amount"],
+    "tags": ["pmpm"]
+  },
+  {
+    "name": "PMPM Alameda by age",
+    "question": "What is PMPM for Alameda County and stratify by age group?",
+    "expected_metric": "PMPM",
+    "expected_dimensions": ["age_group"],
+    "expected_filters": {"county": "Alameda"},
+    "expected_sql_patterns": ["alameda", "age_group"],
+    "tags": ["pmpm"]
+  },
+  {
+    "name": "PMPM county and LOB",
+    "question": "What is PMPM by county and LOB?",
+    "expected_metric": "PMPM",
+    "expected_dimensions": ["county", "lob"],
+    "expected_sql_patterns": ["county", "lob", "paid_amount"],
+    "tags": ["pmpm"]
+  },
+  {
+    "name": "PMPM Santa Clara",
+    "question": "What is PMPM for Santa Clara County?",
+    "expected_metric": "PMPM",
+    "expected_filters": {"county": "Santa Clara"},
+    "expected_sql_patterns": ["santa clara", "paid_amount"],
+    "tags": ["pmpm"]
+  },
+  {
+    "name": "PMPM San Francisco",
+    "question": "What is PMPM for San Francisco County?",
+    "expected_metric": "PMPM",
+    "expected_filters": {"county": "San Francisco"},
+    "expected_sql_patterns": ["san francisco", "paid_amount"],
+    "tags": ["pmpm"]
+  },
+  {
+    "name": "PMPM line of business",
+    "question": "Show PMPM by line of business.",
+    "expected_metric": "PMPM",
+    "expected_dimensions": ["lob"],
+    "expected_sql_patterns": ["lob", "group by"],
+    "tags": ["pmpm"]
+  },
+  {
+    "name": "PMPM monthly trend",
+    "question": "Show PMPM by month.",
+    "expected_metric": "PMPM",
+    "expected_dimensions": ["month"],
+    "expected_sql_patterns": ["month_key", "order by"],
+    "tags": ["pmpm"]
+  },
+  {
+    "name": "PMPM age for Alameda",
+    "question": "What is PMPM for Alameda County by age group?",
+    "expected_metric": "PMPM",
+    "expected_dimensions": ["age_group"],
+    "expected_filters": {"county": "Alameda"},
+    "expected_sql_patterns": ["age_group", "alameda"],
+    "tags": ["pmpm"]
+  },
+  {
+    "name": "PMPM county breakdown",
+    "question": "Show PMPM by county.",
+    "expected_metric": "PMPM",
+    "expected_dimensions": ["county"],
+    "expected_sql_patterns": ["county", "pmpm"],
+    "tags": ["pmpm"]
+  },
+  {
+    "name": "PMPM Contra Costa",
+    "question": "What is PMPM for Contra Costa County?",
+    "expected_metric": "PMPM",
+    "expected_filters": {"county": "Contra Costa"},
+    "expected_sql_patterns": ["paid_amount", "member_months"],
+    "must_execute": false,
+    "tags": ["pmpm"]
+  }
+]

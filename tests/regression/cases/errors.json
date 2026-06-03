@@ -1,0 +1,51 @@
+[
+  {
+    "name": "Ambiguous by group",
+    "question": "Show PMPM by group.",
+    "expect_error": "AMBIGUOUS_DIMENSION",
+    "must_execute": false,
+    "tags": ["error"]
+  },
+  {
+    "name": "Unknown metric revenue",
+    "question": "Show revenue by region.",
+    "expect_error": "UNKNOWN_METRIC",
+    "must_execute": false,
+    "tags": ["error"]
+  },
+  {
+    "name": "Unknown dimension foobar",
+    "question": "Show PMPM by foobar.",
+    "expect_error": "UNKNOWN_DIMENSION",
+    "must_execute": false,
+    "tags": ["error"]
+  },
+  {
+    "name": "Ambiguous group PMPM",
+    "question": "What is PMPM by group?",
+    "expect_error": "AMBIGUOUS_DIMENSION",
+    "must_execute": false,
+    "tags": ["error"]
+  },
+  {
+    "name": "Unknown metric profit",
+    "question": "Show profit by month.",
+    "expect_error": "UNKNOWN_METRIC",
+    "must_execute": false,
+    "tags": ["error"]
+  },
+  {
+    "name": "Unknown dimension widget",
+    "question": "Outstanding claims by widget.",
+    "expect_error": "UNKNOWN_DIMENSION",
+    "must_execute": false,
+    "tags": ["error"]
+  },
+  {
+    "name": "Unknown metric EBITDA",
+    "question": "What is EBITDA by county?",
+    "expect_error": "UNKNOWN_METRIC",
+    "must_execute": false,
+    "tags": ["error"]
+  }
+]

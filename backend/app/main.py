@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from app.config import settings
-from app.models.errors import QuestionAnalysisError
+from app.models.errors import QuestionAnalysisError, structured_error
 from app.routes.metadata import router as metadata_router
 from app.services.metadata_service import MetadataService
 from app.services.question_analyzer import QuestionAnalyzer
@@ -84,18 +84,27 @@ def ask(body: AskRequest):
     try:
         sql = generate_sql(question, intent, metadata_service, prompt_builder)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e)) from e
+        raise HTTPException(
+            status_code=400,
+            detail=structured_error("GENERATION_ERROR", str(e)),
+        ) from e
     except Exception as e:
-        raise HTTPException(status_code=502, detail=f"SQL generation failed: {e}") from e
+        raise HTTPException(
+            status_code=502,
+            detail=structured_error("GENERATION_ERROR", f"SQL generation failed: {e}"),
+        ) from e
 
     try:
-        validated_sql = validate_sql(sql)
+        validated_sql = validate_sql(sql, intent=intent, metadata=metadata_service)
     except SQLValidationError as e:
-        raise HTTPException(status_code=400, detail=str(e)) from e
+        raise HTTPException(status_code=400, detail=e.to_dict()) from e
 
     try:
         results = execute_query(validated_sql)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Query execution failed: {e}") from e
+        raise HTTPException(
+            status_code=400,
+            detail=structured_error("EXECUTION_ERROR", f"Query execution failed: {e}"),
+        ) from e
 
     return AskResponse(question=question, sql=validated_sql, results=results)

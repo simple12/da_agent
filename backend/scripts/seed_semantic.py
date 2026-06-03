@@ -12,7 +12,21 @@ import psycopg
 # Allow imports when run as a script from backend/
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.schema import APPROVED_TABLES  # noqa: E402
+APPROVED_TABLES: dict[str, set[str]] = {
+    "fact_claim": {
+        "claim_id",
+        "member_id",
+        "provider_id",
+        "service_date",
+        "paid_amount",
+        "allowed_amount",
+        "outstanding_amount",
+        "claim_status",
+    },
+    "fact_member_month": {"member_id", "month_key", "member_months"},
+    "dim_member": {"member_id", "county", "age_group", "lob"},
+    "dim_provider": {"provider_id", "provider_name", "provider_group"},
+}
 
 TABLE_DESCRIPTIONS: dict[str, str] = {
     "fact_claim": "Healthcare claims fact table",
@@ -214,6 +228,122 @@ WHERE claim_status = 'PENDING'
 """.strip(),
         "PENDING_CLAIMS",
         "Pending claims count",
+    ),
+    (
+        r"pmpm.*provider\s+group|provider\s+group.*pmpm",
+        """
+SELECT dp.provider_group, SUM(fc.paid_amount) / NULLIF(SUM(fmm.member_months), 0) AS pmpm
+FROM fact_claim fc
+JOIN dim_member dm ON fc.member_id = dm.member_id
+JOIN fact_member_month fmm ON dm.member_id = fmm.member_id
+JOIN dim_provider dp ON fc.provider_id = dp.provider_id
+GROUP BY dp.provider_group
+""".strip(),
+        "PMPM",
+        "PMPM by provider group",
+    ),
+    (
+        r"pmpm.*(county.*lob|lob.*county)",
+        """
+SELECT dm.county, dm.lob, SUM(fc.paid_amount) / NULLIF(SUM(fmm.member_months), 0) AS pmpm
+FROM fact_claim fc
+JOIN dim_member dm ON fc.member_id = dm.member_id
+JOIN fact_member_month fmm ON dm.member_id = fmm.member_id
+GROUP BY dm.county, dm.lob
+""".strip(),
+        "PMPM",
+        "PMPM by county and LOB",
+    ),
+    (
+        r"pmpm.*santa\s+clara",
+        """
+SELECT dm.county, SUM(fc.paid_amount) / NULLIF(SUM(fmm.member_months), 0) AS pmpm
+FROM fact_claim fc
+JOIN dim_member dm ON fc.member_id = dm.member_id
+JOIN fact_member_month fmm ON dm.member_id = fmm.member_id
+WHERE dm.county = 'Santa Clara'
+GROUP BY dm.county
+""".strip(),
+        "PMPM",
+        "PMPM for Santa Clara County",
+    ),
+    (
+        r"pmpm.*san\s+francisco",
+        """
+SELECT dm.county, SUM(fc.paid_amount) / NULLIF(SUM(fmm.member_months), 0) AS pmpm
+FROM fact_claim fc
+JOIN dim_member dm ON fc.member_id = dm.member_id
+JOIN fact_member_month fmm ON dm.member_id = fmm.member_id
+WHERE dm.county = 'San Francisco'
+GROUP BY dm.county
+""".strip(),
+        "PMPM",
+        "PMPM for San Francisco County",
+    ),
+    (
+        r"pending.*by\s+county|pending\s+claims?\s+by\s+county",
+        """
+SELECT dm.county, COUNT(*) AS pending_claims_count
+FROM fact_claim fc
+JOIN dim_member dm ON fc.member_id = dm.member_id
+WHERE fc.claim_status = 'PENDING'
+GROUP BY dm.county
+""".strip(),
+        "PENDING_CLAIMS",
+        "Pending claims by county",
+    ),
+    (
+        r"claims?\s+by\s+status|claim\s+count\s+by\s+status",
+        """
+SELECT fc.claim_status, COUNT(*) AS claim_count
+FROM fact_claim fc
+GROUP BY fc.claim_status
+""".strip(),
+        "CLAIMS_BY_STATUS",
+        "Claims by status",
+    ),
+    (
+        r"members?\s+by\s+county|member\s+count\s+by\s+county",
+        """
+SELECT dm.county, COUNT(DISTINCT dm.member_id) AS member_count
+FROM dim_member dm
+GROUP BY dm.county
+""".strip(),
+        "MEMBER_COUNT",
+        "Members by county",
+    ),
+    (
+        r"members?\s+by\s+lob|member\s+count\s+by\s+lob",
+        """
+SELECT dm.lob, COUNT(DISTINCT dm.member_id) AS member_count
+FROM dim_member dm
+GROUP BY dm.lob
+""".strip(),
+        "MEMBER_COUNT",
+        "Members by LOB",
+    ),
+    (
+        r"(claim\s+volume\s+by\s+provider|claim\s+count\s+by\s+provider|provider\s+claim\s+volume|claims?\s+per\s+provider)",
+        """
+SELECT dp.provider_name, COUNT(*) AS claim_count
+FROM fact_claim fc
+JOIN dim_provider dp ON fc.provider_id = dp.provider_id
+GROUP BY dp.provider_name
+""".strip(),
+        "CLAIMS_BY_STATUS",
+        "Provider claim volume",
+    ),
+    (
+        r"outstanding.*provider\s+group",
+        """
+SELECT dp.provider_group, SUM(fc.outstanding_amount) AS outstanding_claims
+FROM fact_claim fc
+JOIN dim_provider dp ON fc.provider_id = dp.provider_id
+WHERE fc.claim_status <> 'PAID'
+GROUP BY dp.provider_group
+""".strip(),
+        "OUTSTANDING_CLAIMS",
+        "Outstanding claims by provider group",
     ),
 ]
 
